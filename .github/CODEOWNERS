@@ -1,0 +1,30 @@
+# CODEOWNERS — automatic reviewer routing for Stellar MarketPay.
+#
+# GitHub requests a review from the listed owner(s) on every pull request that
+# touches a matching path. Later rules override earlier ones, so more specific
+# paths must be listed after broader ones.
+#
+# See CONTRIBUTING.md ("Code Owners and Review Flow") for the review policy.
+
+# Default owner for anything not explicitly covered below
+*                               @Emmy123222
+
+# Rust Soroban smart contracts — changes here must never merge on
+# frontend/backend-only review
+/contracts/                     @Emmy123222
+
+# Express backend
+/backend/                       @Emmy123222
+
+# Database migrations are high-risk; require explicit owner sign-off
+/backend/src/db/migrations/     @Emmy123222
+
+# Next.js frontend
+/frontend/                      @Emmy123222
+
+# CI / CD workflows and repo automation
+/.github/workflows/             @Emmy123222
+
+# Ops: monitoring and deployment configuration
+/monitoring/                    @Emmy123222
+/deploy/                        @Emmy123222

@@ -25,8 +25,9 @@ Stellar MarketPay is a decentralized freelance marketplace built on the Stellar 
 9. [Branch Naming](#branch-naming)
 10. [Commit Style](#commit-style)
 11. [Submitting a Pull Request](#submitting-a-pull-request)
-12. [Smart Contract Development](#smart-contract-development)
-13. [Pre-commit Hooks (husky + lint-staged)](#pre-commit-hooks-husky--lint-staged)
+12. [Code Owners and Review Flow](#code-owners-and-review-flow)
+13. [Smart Contract Development](#smart-contract-development)
+14. [Pre-commit Hooks (husky + lint-staged)](#pre-commit-hooks-husky--lint-staged)
 
 ---
 
@@ -621,6 +622,52 @@ yourself). CI will still enforce the same rules.
 ### Finding good first issues
 
 Look for the `good first issue` label on GitHub — these are scoped tasks with clear acceptance criteria. Issues tagged `help wanted` are open for contribution without prior discussion.
+
+---
+
+## Code Owners and Review Flow
+
+This repository uses a [`.github/CODEOWNERS`](.github/CODEOWNERS) file to route
+pull requests to the maintainer(s) responsible for each area of the codebase.
+The goal is to make sure a change is reviewed by someone who actually owns that
+domain — in particular, so that a smart-contract change cannot merge with only a
+frontend review.
+
+### How it works
+
+- When you open a PR, GitHub automatically requests a review from the owner(s)
+  of every path your PR touches. You do not need to add reviewers manually.
+- Ownership is defined per top-level area, including the four main domains and
+  the sensitive database-migration path:
+
+  | Path | Area |
+  | ---- | ---- |
+  | `contracts/` | Rust Soroban smart contracts |
+  | `backend/` | Express backend |
+  | `backend/src/db/migrations/` | Database migrations (schema changes) |
+  | `frontend/` | Next.js frontend |
+  | `.github/workflows/` | CI/CD and repo automation |
+  | `monitoring/`, `deploy/` | Ops — monitoring and deployment config |
+
+- A file matches the **last** rule that applies to it, so a migration file under
+  `backend/src/db/migrations/` is routed to the migration owner rather than the
+  general `backend/` owner.
+
+### What to expect as a contributor
+
+- **Wait for the requested owner(s) to review.** A PR is only mergeable once the
+  required code-owner approval is in, in addition to passing CI and the PR
+  checklist above.
+- **A PR touching several areas needs approval from each affected owner.** For
+  example, a change that spans a contract and a migration must be signed off by
+  both owners.
+- **If you add or move files that belong to a new area**, update
+  `.github/CODEOWNERS` in the same PR so routing stays accurate.
+
+### Maintaining CODEOWNERS
+
+Keep `.github/CODEOWNERS` in sync when the project structure or team ownership
+changes. Syntax reference: [About code owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
 
 ---
 
