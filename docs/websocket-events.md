@@ -59,7 +59,7 @@ All server frames use the envelope `{ "event": "<event_name>", "payload": <objec
 
 ### Notification Replay on Reconnect
 
-For a valid JWT, the server queries the user's 20 most recently created notifications when the socket connects. It sends the ones with `created_at` later than the timestamp recorded when that user's previous socket closed, ordered oldest first. Each is sent as a normal `notification:created` frame. On a user's first connection, the comparison starts at the Unix epoch, so at most the latest 20 notifications are replayed. The last-seen timestamp is held in process memory and is updated on socket close; it is not a delivery receipt, and it is lost when the server process restarts. Anonymous connections receive no notification replay. Replay failures are non-fatal and are not reported with a separate frame.
+For a valid JWT, the server queries the user's 20 most recently created notifications when the socket connects. It then filters those rows to notifications whose `created_at` is later than the in-memory timestamp recorded for that user, and sends the remaining rows oldest first (with ID as the tie-breaker). Each is sent as a normal `notification:created` frame. On a user's first connection, the comparison starts at the Unix epoch, so at most the latest 20 notifications are replayed. The timestamp is updated whenever any authenticated socket for that user closes, even if another socket for that user remains connected. It is not a delivery receipt and is lost when the server process restarts, so replay is best-effort rather than a durable cursor. Anonymous connections receive no notification replay. Replay failures are non-fatal and are not reported with a separate frame.
 
 ### Example: Client-Side Usage (JavaScript)
 
